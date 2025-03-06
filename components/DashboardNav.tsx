@@ -1,77 +1,151 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { MessageCircle, LogOut, Home, Settings, Users } from "lucide-react";
-import Dashboard from "./Dashboard";
-import FeedbackForm from "./Feedbackform";
-import FeedbackList from "./Feedbacklist";
-import Profile from "./Profile";
+"use client"
+import { useState, useEffect } from "react"
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom"
+import { Home, MessageCircle, Users, Settings, LogOut } from "lucide-react"
 
-// Components
+import Dashboard from "./Dashboard"
+import FeedbackForm from "./Feedbackform"
+import FeedbackList from "./Feedbacklist"
+import Profile from "./Profile"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+  SidebarRail,
+} from "@/components/ui/sidebar"
+
+// Navigation items
+const navItems = [
+  {
+    title: "Dashboard",
+    url: "/",
+    icon: Home,
+  },
+  {
+    title: "Submit Feedback",
+    url: "/submit-feedback",
+    icon: MessageCircle,
+  },
+  {
+    title: "View Feedback",
+    url: "/feedback",
+    icon: Users,
+  },
+  {
+    title: "Profile",
+    url: "/profile",
+    icon: Settings,
+  },
+]
+
+function AppSidebar() {
+  return (
+    <Sidebar collapsible="icon">
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg">
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <MessageCircle className="size-4" />
+              </div>
+              <div className="flex flex-col gap-0.5 leading-none">
+                <span className="font-semibold">Feedback Hub</span>
+                <span className="text-xs">v1.0.0</span>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+
+      <SidebarContent>
+        <SidebarMenu>
+          {navItems.map((item) => (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton asChild tooltip={item.title}>
+                <a href={item.url}>
+                  <item.icon />
+                  <span>{item.title}</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarContent>
+
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild tooltip="Sign Out">
+              <button>
+                <LogOut />
+                <span>Sign Out</span>
+              </button>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+
+      <SidebarRail />
+    </Sidebar>
+  )
+}
+
+function Loading() {
+  return <span className="loading loading-dots loading-xl"></span>
+}
 
 function DashboardNavigation() {
-  return (
-    <Router>
-      <div className="min-h-screen bg-gray-100">
-        <div className="flex">
-          {/* Sidebar */}
-          <div className="w-64 bg-white h-screen fixed shadow-lg">
-            <div className="p-6">
-              <h1 className="text-2xl font-bold text-blue-600">Feedback Hub</h1>
-            </div>
-            <nav className="mt-6">
-              <NavLink to="/dashboard" icon={<Home />}>
-                Dashboard
-              </NavLink>
-              <NavLink to="/submit-feedback" icon={<MessageCircle />}>
-                Submit Feedback
-              </NavLink>
-              <NavLink to="/feedback" icon={<Users />}>
-                View Feedback
-              </NavLink>
-              <NavLink to="/profile" icon={<Settings />}>
-                Profile
-              </NavLink>
-              <button className="w-full flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 hover:text-blue-600">
-                <LogOut className="w-5 h-5 mr-3" />
-                Sign Out
-              </button>
-            </nav>
-          </div>
+  const [loading, setLoading] = useState(false)
+  const location = useLocation()
 
-          {/* Main Content */}
-          <div className="ml-64 flex-1 p-8">
+  useEffect(() => {
+    setLoading(true)
+    const timer = setTimeout(() => {
+      setLoading(false)
+    }, 500) // Simulate loading time
+
+    return () => clearTimeout(timer)
+  }, [location])
+
+  return (
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center border-b px-4">
+          <SidebarTrigger className="-ml-1" />
+          <h1 className="ml-4 text-xl font-semibold">Feedback Hub</h1>
+        </header>
+        <div className="flex-1 p-8">
+          {loading ? (
+            <Loading />
+          ) : (
             <Routes>
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/" element={<Dashboard />} />
               <Route path="/submit-feedback" element={<FeedbackForm />} />
               <Route path="/feedback" element={<FeedbackList />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/" element={<Dashboard />} />
             </Routes>
-          </div>
+          )}
         </div>
-      </div>
-    </Router>
-  );
+      </SidebarInset>
+    </SidebarProvider>
+  )
 }
 
-function NavLink({
-  to,
-  children,
-  icon,
-}: {
-  to: string;
-  children: React.ReactNode;
-  icon: React.ReactNode;
-}) {
+function App() {
   return (
-    <a
-      href={to}
-      className="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 hover:text-blue-600"
-    >
-      <span className="w-5 h-5 mr-3">{icon}</span>
-      {children}
-    </a>
-  );
+    <Router>
+      <DashboardNavigation />
+    </Router>
+  )
 }
 
-export default DashboardNavigation;
+export default App
