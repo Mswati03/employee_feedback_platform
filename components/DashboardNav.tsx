@@ -1,6 +1,6 @@
 "use client"
-import { useState, useEffect } from "react"
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom"
+import { useRouter, usePathname } from "next/navigation"
+
 import { Home, MessageCircle, Users, Settings, LogOut } from "lucide-react"
 
 import Dashboard from "./Dashboard"
@@ -100,19 +100,12 @@ function AppSidebar() {
 function Loading() {
   return <span className="loading loading-dots loading-xl"></span>
 }
+export default function DashboardNavigation() {
 
-function DashboardNavigation() {
-  const [loading, setLoading] = useState(false)
-  const location = useLocation()
+  const router = useRouter()
 
-  useEffect(() => {
-    setLoading(true)
-    const timer = setTimeout(() => {
-      setLoading(false)
-    }, 500) // Simulate loading time
-
-    return () => clearTimeout(timer)
-  }, [location])
+  const pathname = usePathname()
+ 
 
   return (
     <SidebarProvider>
@@ -123,29 +116,18 @@ function DashboardNavigation() {
           <h1 className="ml-4 text-xl font-semibold">Feedback Hub</h1>
         </header>
         <div className="flex-1 p-8">
-          {loading ? (
-            <Loading />
-          ) : (
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/submit-feedback" element={<FeedbackForm />} />
-              <Route path="/feedback" element={<FeedbackList />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/" element={<Dashboard />} />
-            </Routes>
-          )}
+         
+        <>
+              {pathname === "/" && <Dashboard />}
+              {pathname === "/submit-feedback" && <FeedbackForm />}
+              {pathname === "/feedback" && <FeedbackList />}
+              {pathname === "/profile" && <Profile />}
+            </>
+        
         </div>
       </SidebarInset>
     </SidebarProvider>
   )
 }
 
-function App() {
-  return (
-    <Router>
-      <DashboardNavigation />
-    </Router>
-  )
-}
 
-export default App

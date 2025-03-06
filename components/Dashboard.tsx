@@ -14,21 +14,51 @@ const mockRecentFeedback = [
     id: '1',
     title: 'Improve Meeting Efficiency',
     status: 'pending',
-    submitted_at: '2025-03-05T08:00:00Z'
+    submitted_at: '2025-03-05'
   },
   {
     id: '2',
     title: 'Remote Work Equipment',
     status: 'in_progress',
-    submitted_at: '2025-03-04T15:30:00Z'
+    submitted_at: '2025-03-04'
   },
   {
     id: '3',
     title: 'Team Building Activities',
     status: 'resolved',
-    submitted_at: '2025-03-03T11:20:00Z'
+    submitted_at: '2025-03-03'
   }
 ];
+
+interface StatCardProps {
+  title: string;
+  value: number;
+  icon: React.ReactNode;
+  color: 'blue' | 'yellow' | 'purple' | 'green';
+}
+
+function StatCard({ title, value, icon, color }: StatCardProps) {
+  const colorClasses = {
+    blue: 'bg-blue-50 text-blue-600',
+    yellow: 'bg-yellow-50 text-yellow-600',
+    purple: 'bg-purple-50 text-purple-600',
+    green: 'bg-green-50 text-green-600'
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow p-6">
+      <div className="flex items-center">
+        <div className={`rounded-full p-3 ${colorClasses[color]}`}>
+          {icon}
+        </div>
+        <div className="ml-4">
+          <h3 className="text-sm font-medium text-gray-500">{title}</h3>
+          <p className="text-2xl font-semibold">{value}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Dashboard() {
   return (
@@ -72,7 +102,7 @@ export default function Dashboard() {
               <div>
                 <p className="font-medium">{feedback.title}</p>
                 <p className="text-sm text-gray-500">
-                  {new Date(feedback.submitted_at).toLocaleDateString()}
+                  {feedback.submitted_at}
                 </p>
               </div>
               <span className={`px-3 py-1 rounded-full text-sm font-medium ${
@@ -84,36 +114,6 @@ export default function Dashboard() {
               </span>
             </div>
           ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-interface StatCardProps {
-  title: string;
-  value: number;
-  icon: React.ReactNode;
-  color: 'blue' | 'yellow' | 'purple' | 'green';
-}
-
-function StatCard({ title, value, icon, color }: StatCardProps) {
-  const colorClasses = {
-    blue: 'bg-blue-50 text-blue-600',
-    yellow: 'bg-yellow-50 text-yellow-600',
-    purple: 'bg-purple-50 text-purple-600',
-    green: 'bg-green-50 text-green-600'
-  };
-
-  return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <div className="flex items-center">
-        <div className={`rounded-full p-3 ${colorClasses[color]}`}>
-          {icon}
-        </div>
-        <div className="ml-4">
-          <h3 className="text-sm font-medium text-gray-500">{title}</h3>
-          <p className="text-2xl font-semibold">{value}</p>
         </div>
       </div>
     </div>
